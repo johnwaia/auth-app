@@ -1,50 +1,143 @@
-# Welcome to your Expo app 👋
+# 📱 Auth App – React Native + Expo Router + Supabase
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Une application mobile **React Native** construite avec **Expo** et **Expo Router**, intégrant un système d’**authentification avec Supabase** et une navigation par **onglets** (Accueil & Explorer).  
 
-## Get started
+---
 
-1. Install dependencies
+## 🚀 Fonctionnalités
 
-   ```bash
-   npm install
-   ```
+- 👤 **Authentification sécurisée**
+  - Inscription avec hashage du mot de passe (**bcryptjs**)
+  - Connexion avec vérification des credentials
+  - Gestion d’un profil utilisateur (prénom, nom, téléphone, email)
+  - Redirection automatique vers le tableau de bord après connexion
 
-2. Start the app
+- 🗂️ **Navigation multi-écrans**
+  - (auth) : Connexion & Inscription
+  - (tabs) : Accueil & Explorer
 
-   ```bash
-   npx expo start
-   ```
+- 🔐 **Protection des routes**
+  - Redirection automatique vers l’écran de connexion si l’utilisateur n’est pas authentifié
+  - Accès au tableau de bord uniquement après login
 
-In the output, you'll find options to open the app in a
+- 🛠️ **Technos modernes**
+  - [React Native](https://reactnative.dev/) ⚛️
+  - [Expo](https://expo.dev/) 📱
+  - [Expo Router](https://expo.github.io/router/docs) 🗂️
+  - [Supabase](https://supabase.com/) 🗄️ (base de données & API)
+  - [bcryptjs](https://www.npmjs.com/package/bcryptjs) 🔑 (hash des mots de passe)
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+---
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## 📂 Structure du projet
 
-## Get a fresh project
+```
+/app
+ ├── (auth)/               # Groupe Auth
+ │    ├── _layout.tsx      # Stack Auth
+ │    ├── index.tsx        # Redirect -> sign-in
+ │    ├── sign-in.tsx      # Page de connexion
+ │    └── sign-up.tsx      # Page d’inscription
+ │
+ ├── (tabs)/               # Groupe Tabs
+ │    ├── _layout.tsx      # Tabs layout
+ │    ├── index.tsx        # Accueil (tableau de bord)
+ │    └── explore.tsx      # Explorer
+ │
+ └── _layout.tsx           # Root Layout (Stack racine)
 
-When you're ready, run:
-
-```bash
-npm run reset-project
+/components                # Composants réutilisables (Button, FormInput…)
+/lib                       # Supabase client & validation (Zod)
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+---
 
-## Learn more
+## ▶️ Installation et lancement
 
-To learn more about developing your project with Expo, look at the following resources:
+### 1. Cloner le projet
+```bash
+git clone https://github.com/ton-compte/auth-app.git
+cd auth-app
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### 2. Installer les dépendances
+```bash
+npm install
+# ou
+yarn install
+```
 
-## Join the community
+### 3. Configurer Supabase
+Crée un fichier `lib/supabase.ts` :
 
-Join our community of developers creating universal apps.
+```ts
+import 'react-native-url-polyfill/auto';
+import { createClient } from '@supabase/supabase-js';
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL!;
+const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
+
+export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+```
+
+Ajoute tes clés dans `.env` ou `app.config.js` :
+
+```env
+EXPO_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
+EXPO_PUBLIC_SUPABASE_ANON_KEY=eyxxxx...
+```
+
+### 4. Lancer l’application
+```bash
+npx expo start -c
+```
+
+- 📱 Scanner le QR Code avec **Expo Go** (iOS/Android)  
+- 🖥️ Ou lancer sur un simulateur (iOS : `i`, Android : `a`)
+
+---
+
+## 🗄️ Configuration Supabase
+
+1. Crée un projet sur [app.supabase.com](https://app.supabase.com)  
+2. Dans l’onglet **Table Editor**, crée deux tables :
+
+### Table `users`
+| Colonne        | Type      | Contraintes            |
+|----------------|-----------|------------------------|
+| id             | uuid      | primary key, default uuid_generate_v4() |
+| email          | text      | unique                 |
+| password_hash  | text      | non null               |
+
+### Table `profiles`
+| Colonne     | Type   | Contraintes      |
+|-------------|--------|------------------|
+| email       | text   | primary key, fk vers `users.email` |
+| first_name  | text   |                  |
+| last_name   | text   |                  |
+| phone       | text   |                  |
+
+---
+
+## ⚙️ Scripts utiles
+
+- **Start** : `npx expo start`  
+- **Reset cache** : `npx expo start -c`  
+- **Build** : `eas build --platform android` (ou iOS)  
+
+---
+
+## 📌 Améliorations prévues
+
+- [ ] Ajouter une vraie gestion de session (SecureStore / AsyncStorage)  
+- [ ] Implémenter la déconnexion  
+- [ ] Thématisation (Dark/Light mode)  
+- [ ] Tests unitaires (Jest, Testing Library)  
+- [ ] CI/CD avec Expo EAS  
+
+---
+
+## 👨‍💻 Auteur
+
+Projet développé avec ❤️ par **[Ton Nom]**.  
+N’hésite pas à contribuer ou à proposer des améliorations 🚀  
