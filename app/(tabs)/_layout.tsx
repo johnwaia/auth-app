@@ -11,7 +11,7 @@ export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
-        headerTitle: 'Mon App',
+        headerTitle: 'My Contacts Mobile App',
         headerShown: true,
         headerRight: () => (
           <Pressable
