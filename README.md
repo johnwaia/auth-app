@@ -139,5 +139,5 @@ npx expo start -c
 
 ## 👨‍💻 Auteur
 
-Projet développé avec ❤️ par **[Ton Nom]**.  
+Projet développé avec ❤️ par **JOHN WAIA**.  
 N’hésite pas à contribuer ou à proposer des améliorations 🚀  
